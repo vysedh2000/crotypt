@@ -11,6 +11,11 @@ import methodOverride from "method-override";
 import createHttpError from "http-errors";
 import cookieParser from "cookie-parser";
 import config from "../config/environement";
+import {
+  generateMockPriceUpdate,
+  initialStocks,
+} from "../api/service/mockData";
+import type { Stock } from "../api/model/stock";
 export default function configureExpress({
   app,
 }: {

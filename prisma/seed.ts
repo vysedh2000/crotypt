@@ -29,7 +29,7 @@ async function main() {
       name: "Default User",
       username: "defaultuser",
       password: hashedPassword,
-      role_id: userRole.id,
+      role_id: adminRole.id,
     },
   });
 
