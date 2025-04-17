@@ -1,5 +1,4 @@
-.qodo
-# Based on https://raw.githubusercontent.com/github/gitignore/main/Node.gitignore
+Based on https://raw.githubusercontent.com/github/gitignore/main/Node.gitignore
 
 # Logs
 
@@ -176,3 +175,4 @@ dist
 .DS_Store
 .qodo
 
+.env

@@ -1,9 +1,10 @@
 import { Router } from "express";
-import stockRoute from "./routes/mock/stock.route";
+import cryptoRoute from "./routes/crypto.route";
 
 export default () => {
   const app = Router();
-  stockRoute(app);
+
+  cryptoRoute(app);
 
   return app;
 };

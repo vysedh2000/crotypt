@@ -37,27 +37,36 @@ model Wallet {
   id   Int    @id @default(autoincrement())
   uid  String @unique
   user User?
+  asset   Asset[]
 }
 
 model Asset {
   id          Int   @id @default(autoincrement())
+  wallet_id   Int
   crypto_id   Int?
   stock_id    Int?
   assetType   AssetType
   quantity    Float
   crypto      Crypto?     @relation(references: [id], fields: [crypto_id])
   stock       Stock?      @relation(references: [id], fields: [stock_id])
+  wallet      Wallet      @relation(references: [id], fields: [wallet_id])
 }
 
 model Crypto {
   id      Int   @id @default(autoincrement())
   name    String
+  price   Float
+  volume  Float
+  symbol  String
   asset   Asset[]
 }
 
 model Stock {
   id      Int   @id @default(autoincrement())
   name    String
+  price   Float
+  volume  Float
+  symbol  String
   asset   Asset[]
 }
 
