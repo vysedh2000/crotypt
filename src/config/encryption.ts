@@ -48,11 +48,9 @@ export function sendSecureResponse(
   encrypt: boolean = ENCRYPTION_ENABLED
 ) {
   const dataString = JSON.stringify(data);
-  const processedData = encrypt ? encryptData(dataString) : dataString;
+  const response = encrypt ? encryptData(dataString) : dataString;
+  const decryptedData = decryptData(response);
 
-  const response = {
-    processedData,
-  };
-
-  res.json(response);
+  res.header("Content-Type", "text/plain");
+  res.send(decryptedData);
 }
