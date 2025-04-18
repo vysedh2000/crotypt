@@ -2,17 +2,13 @@ import crypto from "crypto";
 import { config } from "dotenv";
 import type { Response } from "express";
 
-// Load environment variables
 config();
 
-// Encryption configuration from environment
 const ENCRYPTION_ENABLED = process.env.ENCRYPTION_ENABLED === "true";
 const ENCRYPTION_ALGORITHM = process.env.ENCRYPTION_ALGORITHM || "aes-256-cbc";
-const ENCRYPTION_KEY =
-  process.env.ENCRYPTION_KEY || crypto.randomBytes(32).toString("base64");
+const ENCRYPTION_KEY = process.env.ENCRYPTION_KEY || "";
 const ENCRYPTION_IV_LENGTH = parseInt(process.env.ENCRYPTION_IV_LENGTH || "16");
 
-// Helper functions
 export function encryptData(data: string): string {
   if (!ENCRYPTION_ENABLED) return Buffer.from(data).toString("base64");
 
@@ -23,7 +19,6 @@ export function encryptData(data: string): string {
   let encrypted = cipher.update(data, "utf8", "base64");
   encrypted += cipher.final("base64");
 
-  // Combine IV and encrypted data with separator
   return `${iv.toString("base64")}:${encrypted}`;
 }
 
@@ -41,16 +36,13 @@ export function decryptData(encryptedData: string): string {
   return decrypted;
 }
 
-// Enhanced response handler
 export function sendSecureResponse(
   res: Response,
   data: any,
   encrypt: boolean = ENCRYPTION_ENABLED
 ) {
-  const dataString = JSON.stringify(data);
-  const response = encrypt ? encryptData(dataString) : dataString;
-  const decryptedData = decryptData(response);
+  const response = encrypt ? encryptData(data) : data;
 
-  res.header("Content-Type", "text/plain");
-  res.send(decryptedData);
+  res.header("Content-Type", "application/json");
+  res.send(response).status(200);
 }

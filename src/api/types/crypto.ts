@@ -13,4 +13,20 @@ export const createCrypto = z.object({
     .max(5, { message: "Symbol must be at most 5 characters!" }),
 });
 
+export const createCryptoResponse = z.object({
+  status: z.string(),
+  message: z.string(),
+  data: createCrypto,
+});
+
+export const CryptoModel = z.object({
+  id: z.number(),
+  name: z.string(),
+  price: z.number(),
+  volume: z.number(),
+  symbol: z.string(),
+});
+
 export type createCryptoDto = z.infer<typeof createCrypto>;
+export type createCryptoResponse = z.infer<typeof createCryptoResponse>;
+export type cryptoModel = z.infer<typeof createCrypto>;
