@@ -10,16 +10,21 @@ async function startServer() {
   try {
     const app = express();
 
-    console.log("Applying loaders...");
     await require("./loaders").default({ expressApp: app });
 
     app
       .listen(config.port, () => {
         Logger.info(`
-        ################################################
-        🛡️  Server listening on port: ${config.port} 🛡️
-        ################################################
-      `);
+        ------------------------------------------------
+        🚀  Server listening on port: ${config.port} 🚀
+        ------------------------------------------------
+        🚀  Environment: ${config.env} 🚀
+        ------------------------------------------------
+        🚀  Application Name: ${config.appName} 🚀
+        ------------------------------------------------
+        🚀  Application Version: ${config.appVersion} 🚀
+        ------------------------------------------------
+        `);
       })
       .on("error", err => {
         console.error("Server start error:", err);

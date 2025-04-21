@@ -21,6 +21,11 @@ export default {
    */
   databaseURL: process.env.DB_URI,
 
+  env: process.env.ENV,
+
+  appName: process.env.APP_NAME,
+  appVersion: process.env.APP_VERSION,
+
   /**
    * Your secret sauce
    */

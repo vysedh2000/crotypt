@@ -1,5 +1,4 @@
 import expressLoader from "./express";
-import { socketLoader } from "./socket";
 import Logger from "../logger/logger";
 
 export default async ({ expressApp }: any) => {
@@ -7,14 +6,10 @@ export default async ({ expressApp }: any) => {
     console.log("Starting loader process...");
 
     // Ensure DB connection is established
-    Logger.info("✌️ DB loaded and connected!");
-
-    // Dependency Injection logging
-    Logger.info("✌️ Dependency Injector loaded");
+    Logger.info("✌️ Database loaded");
 
     // Apply express loader
     await expressLoader({ app: expressApp });
-    await socketLoader({ app: expressApp });
 
     // Log after express loader
     Logger.info("✌️ Express loaded");
