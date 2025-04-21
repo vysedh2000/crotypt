@@ -1,7 +1,8 @@
 import type { NextFunction, Request, Response } from "express";
 import { CryptoService } from "../service/crypto.service";
-import { sendSecureResponse } from "../../config/encryption";
-import type { createCryptoResponse } from "../types/crypto";
+import { decryptData, getEncryptedData, sendSecureResponse } from "../../config/encryption";
+import type { createCryptoDto, createCryptoResponse } from "../types/crypto";
+import type { defaultRequest } from "../types/request";
 
 export class CryptoController {
   private cryptoService: CryptoService;
@@ -21,9 +22,10 @@ export class CryptoController {
 
   public create = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const requestData = req.body;
-      const data = await this.cryptoService.createCrypto(requestData);
-      sendSecureResponse(res, JSON.stringify(data));
+      const payload: createCryptoDto = getEncryptedData(req);
+      const data = await this.cryptoService.createCrypto(payload);
+
+      res.send(data)
     } catch (error: any) {
       res.status(500).send(error.message);
     }
