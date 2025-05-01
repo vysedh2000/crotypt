@@ -29,8 +29,8 @@ export default {
 	/**
 	 * Your secret sauce
 	 */
-	jwtSecret: process.env.JWT_SECRET,
-	jwtAlgorithm: process.env.JWT_ALGO,
+	jwtSecret: process.env.JWT_SECRET || "",
+	jwtAlgorithm: process.env.JWT_ALGO || "",
 	passwordSalt: process.env.PASSWORD_SALT || 10,
 
 	/**
@@ -45,6 +45,11 @@ export default {
 	 */
 	api: {
 		prefix: "/api",
+	},
+
+	redis: {
+		url: process.env.REDIS_URL || "",
+		hashKey: process.env.HASHKEY || "",
 	},
 
 	encryptionCode: process.env.ENCRYPTION_KEY || "",

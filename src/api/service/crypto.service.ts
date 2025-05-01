@@ -29,7 +29,7 @@ export class CryptoService {
 		}
 		const response: defaultResponse = {
 			status: "success",
-			messaage: "",
+			message: "",
 			data: data,
 		};
 		return response;

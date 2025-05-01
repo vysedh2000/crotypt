@@ -6,6 +6,7 @@ import type { defaultRequest } from "../api/types/request.type";
 config();
 
 const ENCRYPTION_ENABLED = process.env.ENCRYPTION_ENABLED === "true";
+const ENCRYPTION_ENABLED_RECEIVE = process.env.ENCRYPTION_ENABLED_RECEIVE;
 const ENCRYPTION_ALGORITHM = process.env.ENCRYPTION_ALGORITHM || "aes-256-cbc";
 const ENCRYPTION_KEY = process.env.ENCRYPTION_KEY || "";
 const ENCRYPTION_KEY1 = process.env.ENCRYPTION_KEY1 || "";
@@ -18,14 +19,14 @@ export function encryptData(data: string): string {
 	const key = Buffer.from(ENCRYPTION_KEY, "base64");
 	const cipher = crypto.createCipheriv(ENCRYPTION_ALGORITHM, key, iv);
 
-	let encrypted = cipher.update(data, "utf8", "base64");
+	let encrypted = cipher.update(JSON.stringify(data), "utf8", "base64");
 	encrypted += cipher.final("base64");
 
 	return `${iv.toString("base64")}:${encrypted}`;
 }
 
 export function decryptData(encryptedData: string): string {
-	if (!ENCRYPTION_ENABLED)
+	if (!ENCRYPTION_ENABLED_RECEIVE)
 		return Buffer.from(encryptedData, "base64").toString("utf8");
 
 	const [ivString, content] = encryptedData.split(":");
@@ -51,21 +52,25 @@ export function sendSecureResponse(
 
 export function getEncryptedData(req: Request) {
 	try {
-		let request = req.query as defaultRequest;
-		if (request.payload == null) {
-			request = req.body;
+		if (ENCRYPTION_ENABLED_RECEIVE == "false") {
+			return req.body;
+		} else {
+			let request = req.query as defaultRequest;
+			if (request.payload == null) {
+				request = req.body;
+			}
+			if (!isValidHex(request.payload)) {
+				throw new Error("Invalid Hex Format");
+			}
+			const fromHex = (hex: string) => {
+				return Buffer.from(hex, "hex").toString("utf-8");
+			};
+			const base64 = fromHex(request.payload);
+			const data = JSON.parse(decryptData(base64));
+			return data;
 		}
-		if (!isValidHex(request.payload)) {
-			throw new Error("Invalid Hex Format");
-		}
-		const fromHex = (hex: string) => {
-			return Buffer.from(hex, "hex").toString("utf-8");
-		};
-		const base64 = fromHex(request.payload);
-		const data = JSON.parse(decryptData(base64));
-		return data;
 	} catch (error: any) {
-		return "Invalid payload!";
+		return error.message;
 	}
 }
 

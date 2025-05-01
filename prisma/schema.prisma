@@ -15,24 +15,20 @@ datasource db {
 
 model Auth {
   id         String    @id @default(uuid())
-  email      String    @unique
-  username   String    @unique
+  email      String?    
+  username   String?  
   password   String
   totp_key   Bytes?
   last_login DateTime?
+  uid        String?   @unique
   created_at DateTime  @default(now())
   updated_at DateTime  @updatedAt
-  user       User?
 }
 
 model Session {
   id                  String    @id
-  two_factor_verified Boolean   @default(false)
-  admin_id            String?
   expires_at          DateTime
   user_id             String?
-  site_user_id        String?
-  user                User?     @relation(fields: [user_id], references: [id], onDelete: Cascade)
 }
 
 model User {
@@ -40,14 +36,12 @@ model User {
   role_id    Int
   wallet_id  Int?        @unique
   email      String      @unique
-  name       String?
-  username   String
+  name       String?      @unique
+  username   String      @unique
   created_at DateTime   @default(now())
   updated_at DateTime   @updatedAt
+  auth_id    String?     @unique
   role       Role       @relation(references: [id], fields: [role_id])
-  wallet     Wallet?     @relation(references: [id], fields: [wallet_id])
-  auth       Auth?      @relation(references: [id], fields: [id])
-  session    Session[]
 }
 
 model Role {
@@ -59,8 +53,6 @@ model Role {
 model Wallet {
   id   Int    @id @default(autoincrement())
   uid  String @unique
-  user User?
-  asset   Asset[]
 }
 
 model Asset {
@@ -70,9 +62,6 @@ model Asset {
   stock_id    Int?
   assetType   AssetType
   quantity    Float
-  crypto      Crypto?     @relation(references: [id], fields: [crypto_id])
-  stock       Stock?      @relation(references: [id], fields: [stock_id])
-  wallet      Wallet      @relation(references: [id], fields: [wallet_id])
 }
 
 model Crypto {
@@ -81,7 +70,6 @@ model Crypto {
   price   Float
   volume  Float
   symbol  String
-  asset   Asset[]
 }
 
 model Stock {
@@ -90,7 +78,6 @@ model Stock {
   price   Float
   volume  Float
   symbol  String
-  asset   Asset[]
 }
 
 enum AssetType {

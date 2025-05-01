@@ -1,27 +1,43 @@
 import prisma from "../../loaders/prisma";
+import type { loginRequest } from "../types/auth.type";
 
 export class AuthRepository {
-	public async checkEmailOrUsername(email?: string, username?: string) {
+	public async checkEmailOrUsername(payload: loginRequest) {
 		return prisma.auth.findFirst({
 			where: {
-				OR: [{ email: email }, { username: username }],
+				OR: [{ email: payload.email }, { username: payload.username }],
 			},
 			omit: {
 				password: false,
-			},
-			include: {
-				user: true,
 			},
 		});
 	}
 
 	public async createAuth(email: string, username: string, password: string) {
-		return prisma.auth.create({
-			data: {
-				email: email,
-				username: username,
-				password: password,
-			},
+		return prisma.$transaction(async tx => {
+			const auth = await tx.auth.create({
+				data: {
+					email: email,
+					username: username,
+					password: password,
+					uid: null,
+				},
+			});
+			const user = await tx.user.create({
+				data: {
+					email: email,
+					role_id: 1,
+					username: username,
+					auth_id: auth.id,
+				},
+			});
+			await tx.auth.update({
+				where: { id: auth.id },
+				data: {
+					uid: user.id,
+				},
+			});
+			return user;
 		});
 	}
 

@@ -1,10 +1,12 @@
 import { Router } from "express";
 import cryptoRoute from "./routes/crypto.route";
+import authRoute from "./routes/auth.route";
 
 export default () => {
-  const app = Router();
+	const app = Router();
 
-  cryptoRoute(app);
+	cryptoRoute(app);
+	authRoute(app);
 
-  return app;
+	return app;
 };
