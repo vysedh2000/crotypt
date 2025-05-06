@@ -4,7 +4,7 @@ import { redisClient } from "../loaders/redis";
 import config from "../config/environement";
 import type { sessionData } from "../api/types/auth.type";
 import { createErrorResponse } from "../api/types/response.type";
-import { decodeToId } from "../utils/authUtils";
+import { decodeToId, hexToText } from "../utils/authUtils";
 import { sendSecureResponse } from "../config/encryption";
 
 export type ProtectedRouteHandler = (
@@ -21,12 +21,14 @@ function routeAuth(handler: ProtectedRouteHandler) {
 		next: NextFunction
 	): Promise<void> => {
 		try {
-			let token = req.headers.sessionkey;
-			let uid = req.headers.requestid;
-			if (!(typeof token === "string") || !(typeof uid === "string")) {
+			const encryptedToken = req.cookies.sessionToken;
+			let token = decodeToId(encryptedToken);
+			const hexId = req.headers.requestid;
+
+			if (!(typeof token === "string") || !(typeof hexId === "string")) {
 				throw new Error("Unauthorized request!");
 			}
-			token = decodeToId(token);
+			let uid = hexToText(hexId);
 			const sessionData: sessionData = JSON.parse(
 				(await redisClient.hGet(config.redis.hashKey, uid)) as string
 			);

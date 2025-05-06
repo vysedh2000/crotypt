@@ -6,7 +6,8 @@ import type { defaultRequest } from "../api/types/request.type";
 config();
 
 const ENCRYPTION_ENABLED = process.env.ENCRYPTION_ENABLED === "true";
-const ENCRYPTION_ENABLED_RECEIVE = process.env.ENCRYPTION_ENABLED_RECEIVE;
+const ENCRYPTION_ENABLED_RECEIVE =
+	process.env.ENCRYPTION_ENABLED_RECEIVE === "true";
 const ENCRYPTION_ALGORITHM = process.env.ENCRYPTION_ALGORITHM || "aes-256-cbc";
 const ENCRYPTION_KEY = process.env.ENCRYPTION_KEY || "";
 const ENCRYPTION_KEY1 = process.env.ENCRYPTION_KEY1 || "";
@@ -47,12 +48,13 @@ export function sendSecureResponse(
 	const response = encrypt ? encryptData(data) : data;
 
 	res.header("Content-Type", "application/json");
+	console.log(response);
 	res.send(response).status(200);
 }
 
 export function getEncryptedData(req: Request) {
 	try {
-		if (ENCRYPTION_ENABLED_RECEIVE == "false") {
+		if (!ENCRYPTION_ENABLED_RECEIVE) {
 			return req.body;
 		} else {
 			let request = req.query as defaultRequest;
@@ -62,11 +64,13 @@ export function getEncryptedData(req: Request) {
 			if (!isValidHex(request.payload)) {
 				throw new Error("Invalid Hex Format");
 			}
+
 			const fromHex = (hex: string) => {
 				return Buffer.from(hex, "hex").toString("utf-8");
 			};
 			const base64 = fromHex(request.payload);
 			const data = JSON.parse(decryptData(base64));
+			console.log("here", data);
 			return data;
 		}
 	} catch (error: any) {

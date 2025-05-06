@@ -25,16 +25,20 @@ export class AuthController {
 		}
 	};
 	public login = async (req: Request, res: Response, next: NextFunction) => {
-		const payload: loginRequest = getEncryptedData(req);
 		try {
-			const data = await this.authService.login(payload);
+			const payload: loginRequest = getEncryptedData(req);
+			console.log(req.body);
+			const data = await this.authService.login(payload, res);
 			sendSecureResponse(res, data);
 		} catch (e: any) {
-			createErrorResponse(e.message);
+			sendSecureResponse(res, createErrorResponse(e.message));
 		}
 	};
 	public test = async (req: Request, res: Response, next: NextFunction) => {
-		const token = decodeToId(req.headers.sessionkey as string);
-		res.send(token);
+		// const payload: loginRequest = getEncryptedData(req);
+		const data: Request = req;
+		const test = data.cookies;
+		console.log("here", test);
+		res.send(test);
 	};
 }

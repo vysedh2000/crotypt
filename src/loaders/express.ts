@@ -11,7 +11,8 @@ import methodOverride from "method-override";
 import createHttpError from "http-errors";
 import cookieParser from "cookie-parser";
 import config from "../config/environement";
-import { redisClient } from "./redis";
+import { createErrorResponse } from "../api/types/response.type";
+import { sendSecureResponse } from "../config/encryption";
 
 export default function configureExpress({
 	app,
@@ -20,12 +21,16 @@ export default function configureExpress({
 }): void {
 	// Security and parsing middleware
 	app.enable("trust proxy");
-	app.use(cors());
+	const corsOptions = {
+		origin: "http://localhost:3000",
+		credentials: true,
+		allowedHeaders: ["Content-Type", "Authorization"],
+	};
+	app.use(cors(corsOptions));
 	app.use(methodOverride());
 	app.use(cookieParser());
 	app.use(express.json());
 
-	// Health check endpoints
 	app.get("/status", (req: Request, res: Response) => {
 		res.send("API is working").status(200).end();
 	});
@@ -33,11 +38,12 @@ export default function configureExpress({
 		res.send("API is working").status(200).end();
 	});
 
-	// API routes
 	app.use(config.api.prefix, routes());
 
-	// 404 Handler - should be after all valid routes
 	app.use((req: Request, res: Response, next: NextFunction) => {
-		next(createHttpError(404, "Endpoint Not Found"));
+		sendSecureResponse(
+			res,
+			JSON.stringify(createErrorResponse("Endpoint not found!"))
+		);
 	});
 }

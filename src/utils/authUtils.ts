@@ -24,6 +24,10 @@ export function generateSession(): string {
 	return token;
 }
 
+export function hexToText(hex: string) {
+	return Buffer.from(hex, "hex").toString();
+}
+
 export function decodeToId(token: string) {
 	return encodeHexLowerCase(sha256(new TextEncoder().encode(token)));
 }

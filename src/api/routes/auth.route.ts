@@ -9,5 +9,5 @@ export default (app: Router) => {
 	app.use("/auth", router);
 	router.post("/signup", authController.signup);
 	router.post("/login", authController.login);
-	router.get("/test", routeAuth(authController.test));
+	router.post("/test", routeAuth(authController.test));
 };

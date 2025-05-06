@@ -18,6 +18,7 @@ import { encodeHexLowerCase } from "@oslojs/encoding";
 import { sha256 } from "@oslojs/crypto/sha2";
 import { GlobalService } from "./global.service";
 import config from "../../config/environement";
+import type { Response } from "express";
 
 export class AuthService {
 	private authRepository: AuthRepository;
@@ -48,7 +49,7 @@ export class AuthService {
 			throw new Error(error.message);
 		}
 	}
-	public async login(payload: loginRequest) {
+	public async login(payload: loginRequest, res: Response) {
 		const auth = await this.authRepository.checkEmailOrUsername(payload);
 		if (!auth) {
 			throw new Error("Invalid credential!");
@@ -93,6 +94,11 @@ export class AuthService {
 					expired_at: session.expires_at,
 				},
 			};
+			res.cookie("sessionToken", sessionToken, {
+				httpOnly: true, // Cannot be accessed by JavaScript
+				secure: process.env.NODE_ENV === "production", // Only sent over HTTPS
+				sameSite: "lax", // 7 days expiry
+			});
 			return response;
 		} catch (e: any) {
 			throw new Error(e.message);

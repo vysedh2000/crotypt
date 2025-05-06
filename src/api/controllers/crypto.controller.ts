@@ -11,7 +11,7 @@ import type {
 } from "../types/crypto.type";
 import type { defaultRequest } from "../types/request.type";
 import type { defaultResponse } from "../types/response.type";
-import { SUCCESS } from "../../utils/appUtil";
+import { SUCCESS } from "../../utils/authConstant";
 
 export class CryptoController {
 	private cryptoService: CryptoService;
