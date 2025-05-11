@@ -21,7 +21,7 @@ export class AuthController {
 			const data = await this.authService.signUp(payload);
 			sendSecureResponse(res, data);
 		} catch (e: any) {
-			createErrorResponse(e.message);
+			sendSecureResponse(res, createErrorResponse(e.message, "421"));
 		}
 	};
 	public login = async (req: Request, res: Response, next: NextFunction) => {
@@ -31,7 +31,7 @@ export class AuthController {
 			const data = await this.authService.login(payload, res);
 			sendSecureResponse(res, data);
 		} catch (e: any) {
-			sendSecureResponse(res, createErrorResponse(e.message));
+			sendSecureResponse(res, createErrorResponse(e.message, "420"));
 		}
 	};
 	public test = async (req: Request, res: Response, next: NextFunction) => {

@@ -5,6 +5,7 @@ export const createUser = z.object({
 	email: z.string().email(),
 	username: z.string().min(3).max(30),
 	password: z.string().min(8).max(100),
+	country: z.string().min(4).max(35),
 });
 export const login = z.object({
 	email: z.string().email().optional(),

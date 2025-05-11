@@ -1,7 +1,7 @@
 import { CryptoRepository } from "../repositories/crypto.repository";
 import type {
 	createCryptoDto,
-	createCryptoResponse,
+	CryptoHisInsert,
 	cryptoModel,
 } from "../types/crypto.type";
 import type { defaultResponse } from "../types/response.type";
@@ -29,6 +29,35 @@ export class CryptoService {
 		}
 		const response: defaultResponse = {
 			status: "success",
+			code: "",
+			message: "",
+			data: data,
+		};
+		return response;
+	}
+
+	public async insertCryptoHis(request: CryptoHisInsert) {
+		const data = await this.cryptoRepository.insertPriceHis(request);
+		if (!data) {
+			throw new Error("Error inserting data!");
+		}
+		const response: defaultResponse = {
+			status: "success",
+			code: "",
+			message: "",
+			data: data,
+		};
+		return response;
+	}
+
+	public async cryptoPriceHis(request: { symbol: string }) {
+		const data = await this.cryptoRepository.cryptoPriceHis(request);
+		if (!data) {
+			throw new Error("Error get data!");
+		}
+		const response: defaultResponse = {
+			status: "success",
+			code: "",
 			message: "",
 			data: data,
 		};

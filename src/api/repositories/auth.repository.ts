@@ -13,7 +13,12 @@ export class AuthRepository {
 		});
 	}
 
-	public async createAuth(email: string, username: string, password: string) {
+	public async createAuth(
+		email: string,
+		username: string,
+		password: string,
+		country: string
+	) {
 		return prisma.$transaction(async tx => {
 			const auth = await tx.auth.create({
 				data: {
@@ -29,6 +34,7 @@ export class AuthRepository {
 					role_id: 1,
 					username: username,
 					auth_id: auth.id,
+					country: country,
 				},
 			});
 			await tx.auth.update({

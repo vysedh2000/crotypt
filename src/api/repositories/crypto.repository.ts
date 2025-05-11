@@ -1,5 +1,5 @@
 import prisma from "../../loaders/prisma";
-import type { createCryptoDto } from "../types/crypto.type";
+import type { createCryptoDto, CryptoHisInsert } from "../types/crypto.type";
 
 export class CryptoRepository {
 	public async findAll() {
@@ -21,6 +21,8 @@ export class CryptoRepository {
 				price: request.price,
 				volume: request.volume,
 				symbol: request.symbol,
+				ccy: request.ccy,
+				imageUrl: request.imageUrl,
 			},
 		});
 	}
@@ -32,6 +34,25 @@ export class CryptoRepository {
 			},
 			data: {
 				price: request.price,
+			},
+		});
+	}
+
+	public async insertPriceHis(request: CryptoHisInsert) {
+		return prisma.cryptoHistory.create({
+			data: {
+				symbol: request.symbol,
+				price: request.price,
+				ccy: request.ccy,
+				time: request.dateTime,
+			},
+		});
+	}
+
+	public async cryptoPriceHis(request: { symbol: string }) {
+		return prisma.cryptoHistory.findMany({
+			where: {
+				symbol: request.symbol,
 			},
 		});
 	}

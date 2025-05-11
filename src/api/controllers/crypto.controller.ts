@@ -5,12 +5,11 @@ import {
 	getEncryptedData,
 	sendSecureResponse,
 } from "../../config/encryption";
-import type {
-	createCryptoDto,
-	createCryptoResponse,
-} from "../types/crypto.type";
-import type { defaultRequest } from "../types/request.type";
-import type { defaultResponse } from "../types/response.type";
+import type { createCryptoDto, CryptoHisInsert } from "../types/crypto.type";
+import {
+	createErrorResponse,
+	type defaultResponse,
+} from "../types/response.type";
 import { SUCCESS } from "../../utils/authConstant";
 
 export class CryptoController {
@@ -23,30 +22,53 @@ export class CryptoController {
 		try {
 			const data = await this.cryptoService.getAllCryptos();
 			const response: defaultResponse = {
-				status: SUCCESS(),
+				status: SUCCESS,
+				code: "",
 				message: "",
 				data: data,
 			};
 			sendSecureResponse(res, response);
 		} catch (error: any) {
-			res.status(500).send("Internal server error!");
-			throw new Error(error);
+			sendSecureResponse(res, createErrorResponse(error.message, "500"));
 		}
 	};
 
 	public create = async (req: Request, res: Response, next: NextFunction) => {
 		try {
 			const payload: createCryptoDto = getEncryptedData(req);
-			const data = await this.cryptoService.createCrypto(payload);
-			const response: defaultResponse = {
-				status: "success",
-				message: "",
-				data: data,
-			};
+			const response = await this.cryptoService.createCrypto(payload);
 
 			sendSecureResponse(res, response);
 		} catch (error: any) {
-			res.status(500).send(error.message);
+			sendSecureResponse(res, createErrorResponse(error.message, "500"));
+		}
+	};
+
+	public insertPriceHis = async (
+		req: Request,
+		res: Response,
+		next: NextFunction
+	) => {
+		try {
+			const payload: CryptoHisInsert = getEncryptedData(req);
+			const response = await this.cryptoService.insertCryptoHis(payload);
+			sendSecureResponse(res, response);
+		} catch (e: any) {
+			sendSecureResponse(res, createErrorResponse(e.message, "500"));
+		}
+	};
+
+	public cryptoPriceHis = async (
+		req: Request,
+		res: Response,
+		next: NextFunction
+	) => {
+		try {
+			const payload: { symbol: string } = getEncryptedData(req);
+			const response = await this.cryptoService.cryptoPriceHis(payload);
+			sendSecureResponse(res, response);
+		} catch (e: any) {
+			sendSecureResponse(res, createErrorResponse(e.message, "500"));
 		}
 	};
 }

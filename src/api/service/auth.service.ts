@@ -37,10 +37,12 @@ export class AuthService {
 			const data = await this.authRepository.createAuth(
 				payload.email,
 				payload.username,
-				hashPassowrd
+				hashPassowrd,
+				payload.country
 			);
 			const response: defaultResponse = {
 				status: "success",
+				code: "",
 				message: "",
 				data: data,
 			};
@@ -88,6 +90,7 @@ export class AuthService {
 			const response: defaultResponse = {
 				status: "success",
 				message: "",
+				code: "",
 				data: {
 					sessionToken: sessionToken,
 					userToken: userToken,

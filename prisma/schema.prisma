@@ -38,6 +38,7 @@ model User {
   email      String      @unique
   name       String?      @unique
   username   String      @unique
+  country    String     
   created_at DateTime   @default(now())
   updated_at DateTime   @updatedAt
   auth_id    String?     @unique
@@ -53,6 +54,8 @@ model Role {
 model Wallet {
   id   Int    @id @default(autoincrement())
   uid  String @unique
+  balance String
+  ccy  String
 }
 
 model Asset {
@@ -65,19 +68,41 @@ model Asset {
 }
 
 model Crypto {
-  id      Int   @id @default(autoincrement())
+  id      Int   @id @default(autoincrement()) @unique
   name    String
   price   Float
+  ccy     String
   volume  Float
-  symbol  String
+  imageUrl String
+  symbol  String @unique
 }
 
 model Stock {
-  id      Int   @id @default(autoincrement())
+  id      Int   @id @default(autoincrement()) @unique
   name    String
+  ccy     String
   price   Float
+  imageUrl String
   volume  Float
-  symbol  String
+  symbol  String @unique
+}
+
+model CryptoHistory {
+  id      Int   @id @default(autoincrement()) @unique
+  symbol     String
+  price     Float
+  ccy       String
+  time      String
+  insertAt   DateTime     @default(now())
+}
+
+model StockHistory {
+  id    Int @id @default(autoincrement())   @unique
+  symbol    String
+  price     Float
+  ccy       String
+  time      String
+  insertAt    DateTime    @default(now())
 }
 
 enum AssetType {

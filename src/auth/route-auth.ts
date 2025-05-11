@@ -45,7 +45,10 @@ function routeAuth(handler: ProtectedRouteHandler) {
 			}
 			await handler(req, res, next);
 		} catch (e: any) {
-			sendSecureResponse(res, JSON.stringify(createErrorResponse(e.message)));
+			sendSecureResponse(
+				res,
+				JSON.stringify(createErrorResponse(e.message, "401"))
+			);
 		}
 	};
 }

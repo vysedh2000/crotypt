@@ -1,3 +1,1 @@
-export const SUCCESS = (): string => {
-	return "success";
-};
+export const SUCCESS = "success";
